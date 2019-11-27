@@ -1,4 +1,5 @@
 from flask import Flask, request,Response
+import face_recognition
 from face_deal import FaceRecognition
 from PIL import Image
 import numpy as np
@@ -16,7 +17,7 @@ def get_face_locations():
     try:
         file = request.files['file']
     except:
-        return "Filetype Error"
+        return json.dumps({"err_message": "file null"})
     try:
         name=request.values.get(u'name')
     except:
@@ -38,11 +39,28 @@ def get_face_locations():
         return json.dumps({"err_message":"The face is not exit"})
     else:
         return json.dumps(result)
-# 获取所有人名
+# 接受图片返回人名
 @app.route("/get_know_tokens", methods=['POST'])
 def get_know_tokens():
-    print(faceDeal.known_face_names)
-    return json.dumps(faceDeal.known_face_names)
+    try:
+        file = request.files['file']
+    except:
+        return json.dumps({"err_message": "file null"})
+    f = open('./face_location.jpg', 'wb')
+    data = file.read()
+    f.write(data)
+    f.close()
+    image_array = np.array(Image.open("./face_location.jpg").convert("RGB"))
+    result = faceDeal.compare_face_token(image_array)
+    os.remove("./face_location.jpg")
+    if len(result.get('faces')) == 0:
+        return json.dumps({"err_message": "There is no face"})
+    elif result.get('faces')[0].get("face_name") == 'unknown':
+        return json.dumps({"err_message": "The face is not exit"})
+    else:
+        face_name=result.get('faces')[0].get("face_name")
+        print(face_name)
+        return json.dumps({"face_name":face_name})
 # 注册时初始化
 @app.route("/add_tokens", methods=['POST'])
 def add_tokens():
@@ -66,7 +84,7 @@ def add_tokens():
     except:
         return json.dumps({"err_message": "fail to load file,may change"})
 # 添加一张注册用图片
-@app.route('/add_image',methods=['POST'])
+@app.route('/add_images',methods=['POST'])
 def up_load_img():
     try:
         file = request.files['file']
@@ -81,9 +99,11 @@ def up_load_img():
         f = open('./static/image/'+name+'.'+imagetype, "wb")
         f.write(file.read())
         f.close()
+        if len(face_recognition.face_encodings(face_recognition.load_image_file('./static/image/'+name+'.'+imagetype)))<1:
+             return json.dumps({"err_message": "fail to add"})
         return json.dumps({"suc_message": "success"})
     except:
-        return json.dumps({"err_message": "fail to add"})
+        return json.dumps({"err_message": "fail to add2"})
 # 一个用来加入时间文件夹的函数
 def add_imagelist(file,data,name):
     imagetype=str(file.filename).split('.')[1]
