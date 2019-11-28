@@ -8,6 +8,7 @@ import os
 import time
 app = Flask(__name__)
 faceDeal = FaceRecognition()
+#测试
 @app.route('/')
 def hello_world():
     return 'Hello World!'
