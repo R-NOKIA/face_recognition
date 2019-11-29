@@ -62,13 +62,16 @@ def get_know_tokens():
         face_name=result.get('faces')[0].get("face_name")
         print(face_name)
         return json.dumps({"face_name":face_name})
+		
 # 注册时初始化
 @app.route("/add_tokens", methods=['POST'])
 def add_tokens():
+	# 尝试获取图片文件
     try:
         file = request.files['file']
     except:
         return json.dumps({"err_message": "wrong image file"})
+	# 尝试获取图片的属主名
     try:
         name=request.values.get(u'name')
     except:
@@ -84,6 +87,8 @@ def add_tokens():
         return json.dumps({"suc_message": "success"})
     except:
         return json.dumps({"err_message": "fail to load file,may change"})
+
+		
 # 添加一张注册用图片
 @app.route('/add_images',methods=['POST'])
 def up_load_img():
@@ -97,9 +102,8 @@ def up_load_img():
         return json.dumps({"err_message": "name null"})
     imagetype=str(file.filename).split('.')[1]
     try:
-        f = open('./static/image/'+name+'.'+imagetype, "wb")
-        f.write(file.read())
-        f.close()
+		with open('./static/image/'+name+'.'+imagetype, "wb") as f:
+			f.write(file.read())
         if len(face_recognition.face_encodings(face_recognition.load_image_file('./static/image/'+name+'.'+imagetype)))<1:
              return json.dumps({"err_message": "fail to add"})
         return json.dumps({"suc_message": "success"})
