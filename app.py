@@ -105,18 +105,7 @@ def up_load_img():
         return json.dumps({"suc_message": "success"})
     except:
         return json.dumps({"err_message": "fail to add2"})
-# 一个用来加入时间文件夹的函数
-def add_imagelist(file,data,name):
-    imagetype=str(file.filename).split('.')[1]
-    thetime=time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
-    path='./static/image/'+name+'/'+name+'_'+thetime+'.'+imagetype
-    try:
-        f=open(path,'wb')
-        f.write(data)
-        f.close()
-        return "success"
-    except:
-        return "fail to add"
+
 # 通过姓名获取图片
 @app.route('/get_imagebyname',methods=['POST'])
 def get_imagebyname():
