@@ -8,10 +8,7 @@ import os
 import time
 app = Flask(__name__)
 faceDeal = FaceRecognition()
-#测试
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+
 #获取人脸信息，并存入个人本地时间文件
 @app.route("/get_face_locations", methods=['POST'])
 def get_face_locations():
