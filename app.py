@@ -134,6 +134,9 @@ def set_style():
     stylize('./static/style/'+f.filename,
             './static/style/'+f.filename.split('.')[0]+'_1.jpg',
              model='./ST/saved_models/cyberpunk1.pth')
+    stylize('./static/style/'+f.filename,
+            './static/style/'+f.filename.split('.')[0]+'_1.jpg',
+             model='./ST/saved_models/cyberpunk1.pth')
     return json.dumps({'success': 'good'})
 
 
