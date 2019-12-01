@@ -137,6 +137,18 @@ def get_imagesbyname():
         filelist.append(image)
     resp=Response(filelist,mimetype='multipart/form-data')
     return resp
+# 新增 style
+@app.route('/setStyle', methods=['POST'])
+def set_style():
+    f = request.files['file']
+    f.save('./static/style/' + f.filename)
+    stylize('./static/style/'+f.filename,
+            './static/style/'+f.filename.split('.')[0]+'_1.jpg',
+             model='./ST/saved_models/cyberpunk1.pth')
+    stylize('./static/style/'+f.filename,
+            './static/style/'+f.filename.split('.')[0]+'_1.jpg',
+             model='./ST/saved_models/cyberpunk1.pth')
+    return json.dumps({'success': 'good'})
 
 
 if __name__ == '__main__':
