@@ -85,7 +85,18 @@ def add_tokens():
     except:
         return json.dumps({"err_message": "fail to load file,may change"})
 
-		
+# 一个用来加入时间文件夹的函数
+def add_imagelist(file,data,name):
+    imagetype=str(file.filename).split('.')[1]
+    thetime=time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
+    path='./static/image/'+name+'/'+name+'_'+thetime+'.'+imagetype
+    try:
+        f=open(path,'wb')
+        f.write(data)
+        f.close()
+        return "success"
+    except:
+        return "fail to add"
 # 添加一张注册用图片
 @app.route('/add_images',methods=['POST'])
 def up_load_img():
