@@ -8,7 +8,9 @@ import os
 import time
 app = Flask(__name__)
 faceDeal = FaceRecognition()
-
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
 #获取人脸信息，并存入个人本地时间文件
 @app.route("/get_face_locations", methods=['POST'])
 def get_face_locations():
@@ -59,16 +61,13 @@ def get_know_tokens():
         face_name=result.get('faces')[0].get("face_name")
         print(face_name)
         return json.dumps({"face_name":face_name})
-		
 # 注册时初始化
 @app.route("/add_tokens", methods=['POST'])
 def add_tokens():
-	# 尝试获取图片文件
     try:
         file = request.files['file']
     except:
         return json.dumps({"err_message": "wrong image file"})
-	# 尝试获取图片的属主名
     try:
         name=request.values.get(u'name')
     except:
@@ -84,19 +83,6 @@ def add_tokens():
         return json.dumps({"suc_message": "success"})
     except:
         return json.dumps({"err_message": "fail to load file,may change"})
-
-# 一个用来加入时间文件夹的函数
-def add_imagelist(file,data,name):
-    imagetype=str(file.filename).split('.')[1]
-    thetime=time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
-    path='./static/image/'+name+'/'+name+'_'+thetime+'.'+imagetype
-    try:
-        f=open(path,'wb')
-        f.write(data)
-        f.close()
-        return "success"
-    except:
-        return "fail to add"
 # 添加一张注册用图片
 @app.route('/add_images',methods=['POST'])
 def up_load_img():
@@ -110,14 +96,26 @@ def up_load_img():
         return json.dumps({"err_message": "name null"})
     imagetype=str(file.filename).split('.')[1]
     try:
-		with open('./static/image/'+name+'.'+imagetype, "wb") as f:
-			f.write(file.read())
+        f = open('./static/image/'+name+'.'+imagetype, "wb")
+        f.write(file.read())
+        f.close()
         if len(face_recognition.face_encodings(face_recognition.load_image_file('./static/image/'+name+'.'+imagetype)))<1:
              return json.dumps({"err_message": "fail to add"})
         return json.dumps({"suc_message": "success"})
     except:
         return json.dumps({"err_message": "fail to add2"})
-
+# 一个用来加入时间文件夹的函数
+def add_imagelist(file,data,name):
+    imagetype=str(file.filename).split('.')[1]
+    thetime=time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
+    path='./static/image/'+name+'/'+name+'_'+thetime+'.'+imagetype
+    try:
+        f=open(path,'wb')
+        f.write(data)
+        f.close()
+        return "success"
+    except:
+        return "fail to add"
 # 通过姓名获取图片
 @app.route('/get_imagebyname',methods=['POST'])
 def get_imagebyname():
