@@ -43,10 +43,10 @@ class FaceRecognition:
             face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
             # 返回最小数
             best_match_index = np.argmin(face_distances)
-            if matches.count(True)<1:
-                name="unknown"
-                face_names.append(name)
-            matches[best_match_index]:
+            # if matches.count(True)<1:
+            #     name="unknown"
+            #     face_names.append(name)
+            #matches[best_match_index]:
             name = self.known_face_names[best_match_index]
             face_names.append(name)
         for (top, right, bottom, left), name in zip(face_locations, face_names):
