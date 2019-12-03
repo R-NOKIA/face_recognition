@@ -127,26 +127,5 @@ def get_imagesbyname():
     resp=Response(filelist,mimetype='multipart/form-data')
     return resp
 
-
-    def getfile(self,name):
-        path = "./static/image/"
-        temp_file_name_list = os.listdir(path)
-        file_name_list = []
-        for imagename in temp_file_name_list:
-            temp = imagename.split('.')
-            if len(temp) > 1:
-                file_name_list.append(imagename)
-        for fileName in file_name_list:
-            if name == fileName.split('.')[0]:
-                filepath=path+fileName
-                break
-        return filepath
-    # 通过姓名获取图片流
-    def getfiles(self,name):
-        path = './static/image/'+name+'/'
-        filelist=os.listdir(path)
-        return filelist
-
-
 if __name__ == '__main__':
     app.run(debug=True)
